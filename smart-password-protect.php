@@ -38,6 +38,8 @@ require_once SPP_DIR . 'includes/class-spp-manager.php';
  * @return void
  */
 function spp_init() {
+	// Load the plugin text domain for translations.
+	load_plugin_textdomain( 'smart-password-protect', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	$spp_manager = new SPP_Manager();
 	$spp_manager->init();
 }

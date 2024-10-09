@@ -116,10 +116,17 @@ class SPP_Settings {
 		$allowed_ips = isset( $options['spp_allowed_ips'] ) ? json_decode( $options['spp_allowed_ips'], true ) : array();
 		?>
 		<div id="ip-repeater">
-			<div class="ip-field">
-				<input type="text" id="new-ip" placeholder="Enter IP address">
-				<button type="button" id="add-ip" class="button"><?php esc_html_e( 'Add IP', 'smart-password-protect' ); ?></button>
-			</div>
+		<div class="ip-field">
+			<input type="text" id="new-ip" placeholder="Enter IP address">
+			<button type="button" id="add-ip" class="button"><?php esc_html_e( 'Add IP', 'smart-password-protect' ); ?></button>
+			<p><?php esc_html_e( 'Find your IP address from these services:', 'smart-password-protect' ); ?> 
+				<a href="https://api.ipify.org/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'IPify', 'smart-password-protect' ); ?></a>, 
+				<a href="https://ipecho.net/plain" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'IPEcho', 'smart-password-protect' ); ?></a>, 
+				<a href="https://icanhazip.com" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'icanhazip', 'smart-password-protect' ); ?></a>, 
+				<a href="https://ident.me" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Ident.me', 'smart-password-protect' ); ?></a>.
+			</p>
+		</div>
+
 			<table class="widefat">
 				<thead>
 					<tr>
@@ -212,9 +219,13 @@ class SPP_Settings {
 	 */
 	public function sanitize_settings( $options ) {
 		// Validation for password when enabling protection.
-		if ( 1 === $options['spp_enabled'] && isset( $options['spp_enabled'] ) && empty( $options['spp_password'] ) ) {
-			add_settings_error( 'spp_options', 'password_error', esc_html__( 'Password is required to enable protection.', 'smart-password-protect' ), 'error' );
-			unset( $options['spp_enabled'] );  // Do not save 'enabled' if no password is provided.
+		if ( isset( $options['spp_enabled'] ) && '1' === $options['spp_enabled'] ) {
+			if ( empty( $options['spp_password'] ) ) {
+				add_settings_error( 'spp_options', 'password_error', esc_html__( 'Password is required to enable protection.', 'smart-password-protect' ), 'error' );
+				unset( $options['spp_enabled'] );  // Do not save 'enabled' if no password is provided.
+			}
+		} else {
+			$options['spp_enabled'] = '0';
 		}
 
 		// Validation for allowed IP addresses.

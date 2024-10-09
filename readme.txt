@@ -1,6 +1,6 @@
 === Smart Password Protect ===
 Contributors: huzaifaalmesbah
-Tags: password protection, IP protection, security, access control
+Tags: password protection, IP protection, Restrict Content
 Requires at least: 5.6
 Requires PHP: 7.0
 Tested up to: 6.6.2

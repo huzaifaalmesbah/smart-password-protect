@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class SPP_Protection
  */
 class SPP_Protection {
-
 	/**
 	 * Error message for incorrect password.
 	 *
@@ -56,7 +55,6 @@ class SPP_Protection {
 	 */
 	public function check_protection() {
 		$options = get_option( 'spp_options' );
-
 		if ( ! isset( $options['spp_enabled'] ) || '1' !== $options['spp_enabled'] ) {
 			return;
 		}
@@ -81,15 +79,22 @@ class SPP_Protection {
 			return;
 		}
 
-		if ( isset( $_SESSION['spp_authenticated'] ) && $_SESSION['spp_authenticated'] ) {
+		$is_authenticated = false;
+		if ( isset( $_SESSION['spp_authenticated'] ) ) {
+			$is_authenticated = wp_validate_boolean( sanitize_text_field( $_SESSION['spp_authenticated'] ) );
+		}
+
+		if ( $is_authenticated ) {
 			return;
 		}
 
-		if ( isset( $_POST['spp_password'] ) && isset( $_POST['spp_nonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['spp_nonce'], 'spp_nonce_action' ) ) {
-				if ( empty( $_POST['spp_password'] ) ) {
+		// Verify nonce before processing form data.
+		if ( ! empty( $_POST ) && check_admin_referer( 'spp_nonce_action', 'spp_nonce' ) ) {
+			if ( isset( $_POST['spp_password'] ) ) {
+				$submitted_password = sanitize_text_field( wp_unslash( $_POST['spp_password'] ) );
+				if ( empty( $submitted_password ) ) {
 					$this->error_message = esc_html__( 'Password is required.', 'smart-password-protect' );
-				} elseif ( $_POST['spp_password'] === $password ) {
+				} elseif ( $submitted_password === $password ) {
 					$_SESSION['spp_authenticated'] = true;
 					return;
 				} else {
