@@ -19,23 +19,10 @@ class SPP_Settings {
 	 * Initialize the settings page.
 	 */
 	public function init() {
-		add_filter( 'plugin_action_links_' . SPP_BASENAME, array( $this, 'add_plugin_settings_link' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'settings_init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-	}
-
-	/**
-	 * Add settings link to the plugin action links
-	 *
-	 * @param array $links Existing plugin action links.
-	 * @return array Updated plugin action links.
-	 */
-	public function add_plugin_settings_link( $links ) {
-		$settings_link = '<a href="' . admin_url( 'options-general.php?page=spp-settings' ) . '">' . esc_html__( 'Settings', 'smart-password-protect' ) . '</a>';
-		array_push( $links, $settings_link );
-		return $links;
 	}
 
 	/**

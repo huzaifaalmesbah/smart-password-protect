@@ -29,10 +29,8 @@ define( 'SPP_ASSETS_URL', SPP_URL . 'assets/' );
 define( 'SPP_BASENAME', plugin_basename( __FILE__ ) );
 define( 'SPP_FILE', __FILE__ );
 
-// Include the necessary files.
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-spp-settings.php'; // Include settings class.
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-spp-protection.php'; // Include protection class.
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-spp-helpers.php'; // Include helper functions class.
+// Include the manager class.
+require_once SPP_DIR . 'includes/class-spp-manager.php';
 
 /**
  * Initialize the Smart Password Protect plugin.
@@ -40,11 +38,8 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-spp-helpers.php'; // 
  * @return void
  */
 function spp_init() {
-	$spp_settings = new SPP_Settings();
-	$spp_settings->init();
-
-	$spp_protection = new SPP_Protection();
-	$spp_protection->init();
+	$spp_manager = new SPP_Manager();
+	$spp_manager->init();
 }
 
 add_action( 'plugins_loaded', 'spp_init' );
