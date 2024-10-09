@@ -42,7 +42,7 @@ class SPP_Settings {
 	 * Initialize settings.
 	 */
 	public function settings_init() {
-		register_setting( 'spp_settings', 'spp_options' );
+		register_setting( 'spp_settings', 'spp_options', array( $this, 'sanitize_settings' ) );
 
 		// General Settings Section.
 		add_settings_section(
@@ -53,21 +53,19 @@ class SPP_Settings {
 		);
 
 		add_settings_field(
-			'spp_enabled',
-			esc_html__( 'Enable Protection', 'smart-password-protect' ),
-			array( $this, 'enabled_render' ),
-			'spp_settings_general',
-			'spp_plugin_section_general'
-		);
-
-		add_settings_field(
 			'spp_password',
 			esc_html__( 'Password', 'smart-password-protect' ),
 			array( $this, 'password_render' ),
 			'spp_settings_general',
 			'spp_plugin_section_general'
 		);
-
+		add_settings_field(
+			'spp_enabled',
+			esc_html__( 'Enable Protection', 'smart-password-protect' ),
+			array( $this, 'enabled_render' ),
+			'spp_settings_general',
+			'spp_plugin_section_general'
+		);
 		// IP Settings Section.
 		add_settings_section(
 			'spp_plugin_section_ips',
@@ -86,6 +84,16 @@ class SPP_Settings {
 	}
 
 	/**
+	 * Render the password field.
+	 */
+	public function password_render() {
+		$options = get_option( 'spp_options' );
+		?>
+		<input type="text" name="spp_options[spp_password]" id="spp_password" value="<?php echo isset( $options['spp_password'] ) ? esc_attr( $options['spp_password'] ) : ''; ?>">
+		<?php
+	}
+
+	/**
 	 * Render the enabled checkbox.
 	 */
 	public function enabled_render() {
@@ -93,19 +101,10 @@ class SPP_Settings {
 		$enabled = isset( $options['spp_enabled'] ) ? $options['spp_enabled'] : 0;
 		?>
 		<label class="switch">
-			<input type="checkbox" name="spp_options[spp_enabled]" value="1" <?php checked( 1, $enabled ); ?>>
+			<input type="checkbox" name="spp_options[spp_enabled]" value="1" id="spp_enabled" <?php checked( 1, $enabled ); ?>>
 			<span class="slider round"></span>
 		</label>
-		<?php
-	}
-
-	/**
-	 * Render the password field.
-	 */
-	public function password_render() {
-		$options = get_option( 'spp_options' );
-		?>
-		<input type="text" name="spp_options[spp_password]" value="<?php echo isset( $options['spp_password'] ) ? esc_attr( $options['spp_password'] ) : ''; ?>">
+		<p class="description"><?php esc_html_e( 'Enter a password before enabling, otherwise it will not work.', 'smart-password-protect' ); ?></p>
 		<?php
 	}
 
@@ -202,5 +201,43 @@ class SPP_Settings {
 				'allowed_ips' => $allowed_ips,
 			)
 		);
+	}
+
+	/**
+	 * Sanitize settings.
+	 *
+	 * @param array $options The submitted options.
+	 *
+	 * @return array The sanitized options.
+	 */
+	public function sanitize_settings( $options ) {
+		// Validation for password when enabling protection.
+		if ( 1 === $options['spp_enabled'] && isset( $options['spp_enabled'] ) && empty( $options['spp_password'] ) ) {
+			add_settings_error( 'spp_options', 'password_error', esc_html__( 'Password is required to enable protection.', 'smart-password-protect' ), 'error' );
+			unset( $options['spp_enabled'] );  // Do not save 'enabled' if no password is provided.
+		}
+
+		// Validation for allowed IP addresses.
+		if ( isset( $options['spp_allowed_ips'] ) ) {
+			$allowed_ips = json_decode( $options['spp_allowed_ips'], true );
+
+			if ( is_array( $allowed_ips ) ) {
+				$validated_ips = array();
+
+				foreach ( $allowed_ips as $ip ) {
+					if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+						$validated_ips[] = $ip;
+					} else {
+						// Translators: %s is the IP address.
+						add_settings_error( 'spp_options', 'ip_error', sprintf( esc_html__( 'Invalid IP address: %s', 'smart-password-protect' ), esc_html( $ip ) ), 'error' );
+					}
+				}
+
+				// Re-save only validated IPs.
+				$options['spp_allowed_ips'] = wp_json_encode( $validated_ips );
+			}
+		}
+
+		return $options;
 	}
 }

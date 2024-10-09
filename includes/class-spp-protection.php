@@ -31,8 +31,8 @@ class SPP_Protection {
 	 * This method sets up the necessary actions for the protection mechanism.
 	 */
 	public function init() {
-		add_action( 'template_redirect', array( $this, 'check_protection' ) );
 		add_action( 'init', array( $this, 'start_session' ) );
+		add_action( 'template_redirect', array( $this, 'check_protection' ) );
 	}
 
 	/**

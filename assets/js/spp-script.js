@@ -68,4 +68,22 @@ jQuery(document).ready(function($) {
         activateTab('#general-settings');
     }
 
+    // Password and Enable Protection functionality
+    var $passwordField = $('#spp_password');
+    var $enabledCheckbox = $('#spp_enabled');
+
+    // Initially disable the checkbox if the password is empty.
+    if ($passwordField.val() === '') {
+        $enabledCheckbox.prop('disabled', true);
+    }
+
+    // Enable the checkbox when the user starts typing in the password field.
+    $passwordField.on('input', function() {
+        if ($(this).val() !== '') {
+            $enabledCheckbox.prop('disabled', false);
+        } else {
+            $enabledCheckbox.prop('disabled', true);
+        }
+    });
+
 });
