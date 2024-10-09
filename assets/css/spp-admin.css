@@ -1,0 +1,130 @@
+/* Tab styles */
+.nav-tab {
+  margin-right: 5px;
+  padding: 8px 15px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.nav-tab-active {
+  background-color: #fff;
+  border-color: #ccc;
+  border-bottom: 1px solid #fff;
+}
+
+.tab-content {
+  border: 1px solid #ccc;
+  padding: 20px;
+  background-color: #fff;
+  display: none;
+}
+
+.tab-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.tab-content th, .tab-content td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.tab-content th {
+  background-color: #f9f9f9;
+}
+
+.tab-content button {
+  padding: 5px 10px;
+  color: #fff;
+  background-color: #ff5f5f;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.tab-content button:hover {
+  background-color: #e04a4a;
+}
+
+/* Input styles */
+#new-ip {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: calc(100% - 120px);
+  display: inline-block;
+  margin-right: 10px;
+}
+
+#add-ip {
+  padding: 6px 12px;
+  color: #fff;
+  background-color: #0073aa;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#add-ip:hover {
+  background-color: #005177;
+}
+
+/* Toggle switch styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* Toggle on */
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Round slider */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
