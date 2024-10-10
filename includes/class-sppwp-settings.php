@@ -119,10 +119,6 @@ class SPPWP_Settings {
 		<div class="ip-field">
 			<input type="text" id="new-ip" placeholder="Enter IP address">
 			<button type="button" id="add-ip" class="button"><?php esc_html_e( 'Add IP', 'smart-password-protect' ); ?></button>
-			<p><?php esc_html_e( 'Find your IP address from these services:', 'smart-password-protect' ); ?> 
-				<a href="http://checkip.amazonaws.com" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Amazon Web Services', 'smart-password-protect' ); ?></a>, 
-				<a href="https://ipecho.net/plain" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'IPEcho', 'smart-password-protect' ); ?></a>.
-			</p>
 		</div>
 
 			<table class="widefat">

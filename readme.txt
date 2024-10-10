@@ -47,28 +47,6 @@ The Smart Password Protect plugin is compatible with most WordPress themes. If y
 
 3. Frontend Protection - A screenshot displaying the password prompt that users see when trying to access the protected site.
 
-== Privacy and Policy ==
-
-Please note that this plugin retrieves the public IP address of users using reliable external services for enhanced security. The following services may be used to obtain the public IP address:
-
-- [AWS Check IP](http://checkip.amazonaws.com) - Amazon Web Services
-- [IPEcho](https://ipecho.net/plain)
-
-Your privacy is important to us, and we do not store or share your IP address with any third parties.
-
-### Links to Services
-
-1. **AWS Check IP**
-   - [Service Endpoint](http://checkip.amazonaws.com)
-   - [Privacy Policy](https://aws.amazon.com/privacy/)
-   - [Terms of Service](https://aws.amazon.com/service-terms/)
-
-2. **IPEcho**
-   - [Service Endpoint](https://ipecho.net/plain)
-   - [Privacy Policy](https://ipecho.net/developers.html)
-   - [Terms of Service](https://ipecho.net/developers.html)
-
-Remember, this is for your own legal protection. Use of services must be upfront and well documented.
 == Changelog ==
 
 = 1.0.0 =
