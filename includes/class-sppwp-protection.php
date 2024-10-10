@@ -3,10 +3,9 @@
  * Class SPPWP_Protection
  *
  * This class handles the protection mechanisms for the Smart Password Protect plugin.
- * It checks if the protection is enabled and whether the user is allowed to access the site
- * based on their IP address or password.
  *
  * @package SmartPasswordProtect
+ * @since 1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,31 +13,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class SPPWP_Protection
+ * SPPWP_Protection Class
+ *
+ * Handles password protection functionality including session management,
+ * protection checks, and password form display.
+ *
+ * @since 1.0.0
  */
 class SPPWP_Protection {
+
 	/**
-	 * Error message for incorrect password.
+	 * Stores error messages for password validation
 	 *
 	 * @var string
 	 */
 	private $error_message = '';
 
 	/**
-	 * Initialize the protection class.
+	 * Initialize the protection functionality
 	 *
-	 * This method sets up the necessary actions for the protection mechanism.
+	 * Sets up action hooks for session handling, protection checks,
+	 * and style enqueuing.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		add_action( 'plugins_loaded', array( $this, 'start_session' ) );
 		add_action( 'template_redirect', array( $this, 'check_protection' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 	}
 
 	/**
-	 * Start a session if one is not already started.
+	 * Enqueue styles for the password form
 	 *
-	 * This method checks if a session is already active and starts a new session
-	 * if necessary.
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		wp_register_style(
+			'sppwp-password-form',
+			SPPWP_ASSETS_URL . 'css/password-form.css',
+			array(),
+			SPPWP_VERSION
+		);
+	}
+
+	/**
+	 * Start the PHP session if not already started
+	 *
+	 * @return void
 	 */
 	public function start_session() {
 		if ( ! session_id() ) {
@@ -47,11 +69,12 @@ class SPPWP_Protection {
 	}
 
 	/**
-	 * Check protection based on user status and settings.
+	 * Check if the current page needs protection
 	 *
-	 * This method checks if the protection is enabled, if the user is logged in,
-	 * and whether the user's IP address is allowed. If the user is not allowed,
-	 * it displays the password form.
+	 * Validates user authentication status, IP allowance,
+	 * and password submission. Shows password form if needed.
+	 *
+	 * @return void
 	 */
 	public function check_protection() {
 		$options = get_option( 'sppwp_options' );
@@ -88,7 +111,6 @@ class SPPWP_Protection {
 			return;
 		}
 
-		// Verify nonce before processing form data.
 		if ( ! empty( $_POST ) && check_admin_referer( 'sppwp_nonce_action', 'sppwp_nonce' ) ) {
 			if ( isset( $_POST['sppwp_password'] ) ) {
 				$submitted_password = sanitize_text_field( wp_unslash( $_POST['sppwp_password'] ) );
@@ -103,17 +125,19 @@ class SPPWP_Protection {
 			}
 		}
 
+		wp_enqueue_style( 'sppwp-password-form' );
 		$this->show_password_form();
 		exit;
 	}
 
 	/**
-	 * Display the password form.
+	 * Display the password protection form
 	 *
-	 * This method outputs the HTML for the password form that users must fill out
-	 * to access the site. It also enqueues the necessary CSS inline.
+	 * Includes the password form template file.
+	 *
+	 * @return void
 	 */
 	private function show_password_form() {
-		include SPPWP_DIR . 'includes/templetes/password-form.php';
+		include SPPWP_DIR . 'includes/templates/password-form.php';
 	}
 }
