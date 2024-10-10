@@ -2,7 +2,7 @@
 /**
  * Helper functions for the Smart Password Protect plugin.
  *
- * This file contains the SPP_Helpers class, which provides utility functions
+ * This file contains the SPPWP_Helpers class, which provides utility functions
  * for retrieving the public IP address of the current user.
  *
  * @package SmartPasswordProtect
@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class SPP_Helpers
+ * Class SPPWP_Helpers
  *
  * Contains helper functions for the Smart Password Protect plugin.
  */
-class SPP_Helpers {
+class SPPWP_Helpers {
 
 	/**
 	 * Get the public IP address of the current user.
@@ -29,10 +29,8 @@ class SPP_Helpers {
 	 */
 	public static function get_public_ip() {
 		$public_ip_services = array(
-			'https://api.ipify.org',
+			'http://checkip.amazonaws.com',
 			'https://ipecho.net/plain',
-			'https://icanhazip.com',
-			'https://ident.me',
 		);
 
 		foreach ( $public_ip_services as $service ) {

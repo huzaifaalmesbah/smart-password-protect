@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
     // Store allowed IPs in an array
-    let allowed_ips = SPP_Data.allowed_ips || [];
+    let allowed_ips = SPPWP_Data.allowed_ips || [];
 
     // Function to render the IP list in the table
     function renderIPList() {
@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
         });
 
         // Update the hidden input field with the updated list of allowed IPs (as JSON)
-        $('#spp_allowed_ips').val(JSON.stringify(allowed_ips));
+        $('#sppwp_allowed_ips').val(JSON.stringify(allowed_ips));
     }
 
     // Event listener for adding a new IP
@@ -69,8 +69,8 @@ jQuery(document).ready(function($) {
     }
 
     // Password and Enable Protection functionality
-    var $passwordField = $('#spp_password');
-    var $enabledCheckbox = $('#spp_enabled');
+    var $passwordField = $('#sppwp_password');
+    var $enabledCheckbox = $('#sppwp_enabled');
 
     // Initially disable the checkbox if the password is empty.
     if ($passwordField.val() === '') {

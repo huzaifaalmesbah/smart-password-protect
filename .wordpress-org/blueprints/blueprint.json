@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/wp-admin/options-general.php?page=spp-settings",
+	"landingPage": "/wp-admin/options-general.php?page=sppwp-settings",
 	"features": {
 		"networking": true
 	},

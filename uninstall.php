@@ -11,4 +11,4 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Delete the plugin options from the database.
-delete_option( 'spp_options' );
+delete_option( 'sppwp_options' );

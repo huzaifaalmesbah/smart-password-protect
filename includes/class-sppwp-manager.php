@@ -1,6 +1,6 @@
 <?php
 /**
- * Class SPP_Manager
+ * Class SPPWP_Manager
  *
  * This class manages the loading and initialization of the Smart Password Protect plugin components.
  *
@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class SPP_Manager
+ * Class SPPWP_Manager
  *
  * This class handles the loading and initialization of the Smart Password Protect plugin.
  */
-class SPP_Manager {
+class SPPWP_Manager {
 
 	/**
-	 * Initialize the SPP_Manager class.
+	 * Initialize the SPPWP_Manager class.
 	 *
 	 * This method loads and initializes the necessary classes for the plugin.
 	 *
@@ -28,7 +28,7 @@ class SPP_Manager {
 	public function init() {
 		$this->load_classes();
 		$this->initialize_classes();
-		add_filter( 'plugin_action_links_' . SPP_BASENAME, array( $this, 'add_plugin_settings_link' ) );
+		add_filter( 'plugin_action_links_' . SPPWP_BASENAME, array( $this, 'add_plugin_settings_link' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 	}
 
@@ -39,7 +39,7 @@ class SPP_Manager {
 	 * @return array Updated plugin action links.
 	 */
 	public function add_plugin_settings_link( $links ) {
-		$settings_link = '<a href="' . admin_url( 'options-general.php?page=spp-settings' ) . '">' . esc_html__( 'Settings', 'smart-password-protect' ) . '</a>';
+		$settings_link = '<a href="' . admin_url( 'options-general.php?page=sppwp-settings' ) . '">' . esc_html__( 'Settings', 'smart-password-protect' ) . '</a>';
 		array_push( $links, $settings_link );
 		return $links;
 	}
@@ -52,7 +52,7 @@ class SPP_Manager {
 	 * @return array Updated row meta links.
 	 */
 	public function plugin_row_meta( $links, $file ) {
-		if ( SPP_BASENAME === $file ) {
+		if ( SPPWP_BASENAME === $file ) {
 			$row_meta = array(
 				'support' => '<a href="https://wordpress.org/support/plugin/smart-password-protect" target="_blank">' . esc_html__( 'Support', 'smart-password-protect' ) . '</a>',
 			);
@@ -67,9 +67,9 @@ class SPP_Manager {
 	 * @return void
 	 */
 	private function load_classes() {
-		require_once SPP_DIR . 'includes/class-spp-settings.php'; // Include settings class.
-		require_once SPP_DIR . 'includes/class-spp-protection.php'; // Include protection class.
-		require_once SPP_DIR . 'includes/class-spp-helpers.php'; // Include helper functions class.
+		require_once SPPWP_DIR . 'includes/class-sppwp-settings.php'; // Include settings class.
+		require_once SPPWP_DIR . 'includes/class-sppwp-protection.php'; // Include protection class.
+		require_once SPPWP_DIR . 'includes/class-sppwp-helpers.php'; // Include helper functions class.
 	}
 
 	/**
@@ -78,10 +78,10 @@ class SPP_Manager {
 	 * @return void
 	 */
 	private function initialize_classes() {
-		$spp_settings = new SPP_Settings();
-		$spp_settings->init();
+		$sppwp_settings = new SPPWP_Settings();
+		$sppwp_settings->init();
 
-		$spp_protection = new SPP_Protection();
-		$spp_protection->init();
+		$sppwp_protection = new SPPWP_Protection();
+		$sppwp_protection->init();
 	}
 }
