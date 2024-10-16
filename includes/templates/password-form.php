@@ -25,6 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2><?php esc_html_e( 'Password Required', 'smart-password-protect' ); ?></h2>
 			<p><?php esc_html_e( 'Please enter the website password to access:', 'smart-password-protect' ); ?></p>
 			<input type="password" name="sppwp_password" required placeholder="<?php esc_attr_e( 'Enter your password', 'smart-password-protect' ); ?>">
+			<div class="sppwp-remember-me">
+				<input type="checkbox" name="sppwp_remember_me" id="sppwp_remember_me" value="1">
+				<label for="sppwp_remember_me"><?php esc_html_e( 'Remember Me', 'smart-password-protect' ); ?></label>
+			</div>
 			<?php wp_nonce_field( 'sppwp_nonce_action', 'sppwp_nonce' ); ?>
 			<input type="submit" value="<?php esc_attr_e( 'Login', 'smart-password-protect' ); ?>">
 			<?php if ( ! empty( $this->error_message ) ) : ?>

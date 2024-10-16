@@ -1,45 +1,42 @@
 <?php
 /**
- * Class SPPWP_Protection
+ * SPPWP Protection Class
  *
- * This class handles the protection mechanisms for the Smart Password Protect plugin.
+ * This file contains the SPPWP_Protection class which handles the password protection
+ * functionality for the Smart Password Protect WordPress plugin.
  *
  * @package SmartPasswordProtect
- * @since 1.0.0
  */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
 
 /**
  * SPPWP_Protection Class
  *
- * Handles password protection functionality including session management,
- * protection checks, and password form display.
- *
- * @since 1.0.0
+ * Manages the password protection functionality including authentication,
+ * cookie handling, and form display.
  */
 class SPPWP_Protection {
 
 	/**
-	 * Stores error messages for password validation
+	 * Error message for password form
 	 *
 	 * @var string
 	 */
 	private $error_message = '';
 
 	/**
-	 * Initialize the protection functionality
+	 * Name of the authentication cookie
 	 *
-	 * Sets up action hooks for session handling, protection checks,
-	 * and style enqueuing.
+	 * @var string
+	 */
+	private $cookie_name = 'sppwp_auth';
+
+	/**
+	 * Initialize the protection functionality
 	 *
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'plugins_loaded', array( $this, 'start_session' ) );
-		add_action( 'template_redirect', array( $this, 'check_protection' ) );
+		add_action( 'init', array( $this, 'check_protection' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 	}
 
@@ -49,7 +46,7 @@ class SPPWP_Protection {
 	 * @return void
 	 */
 	public function enqueue_styles() {
-		wp_register_style(
+		wp_enqueue_style(
 			'sppwp-password-form',
 			SPPWP_ASSETS_URL . 'css/password-form.css',
 			array(),
@@ -58,21 +55,7 @@ class SPPWP_Protection {
 	}
 
 	/**
-	 * Start the PHP session if not already started
-	 *
-	 * @return void
-	 */
-	public function start_session() {
-		if ( ! session_id() ) {
-			session_start();
-		}
-	}
-
-	/**
-	 * Check if the current page needs protection
-	 *
-	 * Validates user authentication status, IP allowance,
-	 * and password submission. Shows password form if needed.
+	 * Check if protection is needed and handle authentication
 	 *
 	 * @return void
 	 */
@@ -81,7 +64,6 @@ class SPPWP_Protection {
 		if ( ! isset( $options['sppwp_enabled'] ) || '1' !== $options['sppwp_enabled'] ) {
 			return;
 		}
-
 		if ( is_user_logged_in() ) {
 			return;
 		}
@@ -97,17 +79,13 @@ class SPPWP_Protection {
 
 		$password  = isset( $options['sppwp_password'] ) ? $options['sppwp_password'] : '';
 		$client_ip = SPPWP_Helpers::get_public_ip();
-
 		if ( in_array( $client_ip, $allowed_ips, true ) ) {
 			return;
 		}
 
-		$is_authenticated = false;
-		if ( isset( $_SESSION['sppwp_authenticated'] ) ) {
-			$is_authenticated = wp_validate_boolean( sanitize_text_field( $_SESSION['sppwp_authenticated'] ) );
-		}
+		$remember_me_days = isset( $options['sppwp_remember_me'] ) ? intval( $options['sppwp_remember_me'] ) : 7;
 
-		if ( $is_authenticated ) {
+		if ( $this->is_authenticated( $password ) ) {
 			return;
 		}
 
@@ -117,7 +95,8 @@ class SPPWP_Protection {
 				if ( empty( $submitted_password ) ) {
 					$this->error_message = esc_html__( 'Password is required.', 'smart-password-protect' );
 				} elseif ( $submitted_password === $password ) {
-					$_SESSION['sppwp_authenticated'] = true;
+					$remember_me = isset( $_POST['sppwp_remember_me'] ) ? true : false;
+					$this->set_authentication_cookie( $password, $remember_me_days, $remember_me );
 					return;
 				} else {
 					$this->error_message = esc_html__( 'Incorrect password. Please try again.', 'smart-password-protect' );
@@ -125,15 +104,49 @@ class SPPWP_Protection {
 			}
 		}
 
-		wp_enqueue_style( 'sppwp-password-form' );
 		$this->show_password_form();
 		exit;
 	}
 
 	/**
-	 * Display the password protection form
+	 * Check if the user is authenticated
 	 *
-	 * Includes the password form template file.
+	 * @param string $correct_password The correct password to check against.
+	 * @return boolean True if authenticated, false otherwise.
+	 */
+	private function is_authenticated( $correct_password ) {
+		if ( isset( $_COOKIE[ $this->cookie_name ] ) ) {
+			$cookie_value = sanitize_text_field( $_COOKIE[ $this->cookie_name ] );
+			$parts        = explode( '|', $cookie_value );
+			if ( count( $parts ) === 2 ) {
+				list( $hashed_password, $expiry ) = $parts;
+				if ( time() < intval( $expiry ) && wp_check_password( $correct_password, $hashed_password ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Set the authentication cookie
+	 *
+	 * @param string  $password         The password to hash and store.
+	 * @param integer $remember_me_days Number of days to remember the user.
+	 * @param boolean $remember_me      Whether to set a long-term cookie.
+	 * @return void
+	 */
+	private function set_authentication_cookie( $password, $remember_me_days, $remember_me ) {
+		$expiry          = $remember_me ? time() + ( $remember_me_days * DAY_IN_SECONDS ) : time() + DAY_IN_SECONDS;
+		$hashed_password = wp_hash_password( $password );
+		$cookie_value    = $hashed_password . '|' . $expiry;
+		$secure          = is_ssl();
+		$http_only       = true;
+		setcookie( $this->cookie_name, $cookie_value, $expiry, COOKIEPATH, COOKIE_DOMAIN, $secure, $http_only );
+	}
+
+	/**
+	 * Display the password form
 	 *
 	 * @return void
 	 */

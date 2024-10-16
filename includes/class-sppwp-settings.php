@@ -59,6 +59,7 @@ class SPPWP_Settings {
 			'sppwp_settings_general',
 			'sppwp_plugin_section_general'
 		);
+
 		add_settings_field(
 			'sppwp_enabled',
 			esc_html__( 'Enable Protection', 'smart-password-protect' ),
@@ -66,6 +67,15 @@ class SPPWP_Settings {
 			'sppwp_settings_general',
 			'sppwp_plugin_section_general'
 		);
+
+		add_settings_field(
+			'sppwp_remember_me',
+			esc_html__( 'Remember Me (Days)', 'smart-password-protect' ),
+			array( $this, 'remember_me_render' ),
+			'sppwp_settings_general',
+			'sppwp_plugin_section_general'
+		);
+
 		// IP Settings Section.
 		add_settings_section(
 			'sppwp_plugin_section_ips',
@@ -109,6 +119,18 @@ class SPPWP_Settings {
 	}
 
 	/**
+	 * Render the remember me days field.
+	 */
+	public function remember_me_render() {
+		$options = get_option( 'sppwp_options' );
+		$days    = isset( $options['sppwp_remember_me'] ) ? intval( $options['sppwp_remember_me'] ) : 7;
+		?>
+		<input type="number" name="sppwp_options[sppwp_remember_me]" id="sppwp_remember_me" value="<?php echo esc_attr( $days ); ?>" min="1">
+		<p class="description"><?php esc_html_e( 'Number of days to remember the user\'s authentication.', 'smart-password-protect' ); ?></p>
+		<?php
+	}
+
+	/**
 	 * Render the allowed IPs field.
 	 */
 	public function allowed_ips_render() {
@@ -116,10 +138,10 @@ class SPPWP_Settings {
 		$allowed_ips = isset( $options['sppwp_allowed_ips'] ) ? json_decode( $options['sppwp_allowed_ips'], true ) : array();
 		?>
 		<div id="ip-repeater">
-		<div class="ip-field">
-			<input type="text" id="new-ip" placeholder="Enter IP address">
-			<button type="button" id="add-ip" class="button"><?php esc_html_e( 'Add IP', 'smart-password-protect' ); ?></button>
-		</div>
+			<div class="ip-field">
+				<input type="text" id="new-ip" placeholder="Enter IP address">
+				<button type="button" id="add-ip" class="button"><?php esc_html_e( 'Add IP', 'smart-password-protect' ); ?></button>
+			</div>
 
 			<table class="widefat">
 				<thead>
@@ -241,6 +263,11 @@ class SPPWP_Settings {
 				// Re-save only validated IPs.
 				$options['sppwp_allowed_ips'] = wp_json_encode( $validated_ips );
 			}
+		}
+
+		// Sanitize remember me days.
+		if ( isset( $options['sppwp_remember_me'] ) ) {
+			$options['sppwp_remember_me'] = max( 1, intval( $options['sppwp_remember_me'] ) );
 		}
 
 		return $options;
