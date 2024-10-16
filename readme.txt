@@ -1,9 +1,9 @@
 === Smart Password Protect – Easily Password Protect Your Entire WP Site ===
 Contributors: huzaifaalmesbah
-Tags: password protection, IP restriction, secure content, access control
+Tags: password protection, content protection, access control, security
 Requires at least: 5.6
-Requires PHP: 7.0
 Tested up to: 6.6.2
+Requires PHP: 7.0
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,20 +26,20 @@ Protect your WordPress site with a password or by allowing access only to specif
 
 == Installation ==
 
-=== Plugin Installation Method: ===
+= Plugin Installation Method: =
 1. Go to the WordPress dashboard.
 2. Navigate to **Plugins > Add New**.
 3. Type “Smart Password Protect” in the search box.
 4. Click on the **Install** button.
 5. After installation, activate the plugin.
 
-=== Installation via Zip File: ===
+= Installation via Zip File: =
 1. Download the **Smart Password Protect** plugin zip file from WordPress.
 2. Go to your site Dashboard > **Plugins > Add New > Upload Plugins**.
 3. Select the `smart-password-protect.zip` file and proceed to install.
 4. Activate **Smart Password Protect**.
 
-=== Plugin Configuration: ===
+= Plugin Configuration: =
 1. Go to your site Dashboard > **Settings > Smart Password Protect**.
 2. Configure your desired settings, including enabling password protection and adding allowed IP addresses.
 
