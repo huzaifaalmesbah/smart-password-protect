@@ -1,4 +1,4 @@
-=== Smart Password Protect – Easily Password Protect Your Entire WordPress Site ===
+=== Smart Password Protect – Easily Password Protect Your Entire WP Site ===
 Contributors: huzaifaalmesbah
 Tags: password protection, IP restriction, secure content, access control
 Requires at least: 5.6
@@ -23,10 +23,6 @@ Protect your WordPress site with a password or by allowing access only to specif
 - **User-Friendly Interface**: The plugin comes with an intuitive admin settings page that allows you to configure options effortlessly. You can enable protection, set strong passwords, and manage allowed IP addresses with just a few clicks, regardless of your technical expertise.
 
 - **Compatibility**: Smart Password Protect is designed to work seamlessly with most WordPress themes and plugins, ensuring that your site's design and functionality remain intact while enhancing security.
-
-=== Why Choose Smart Password Protect? ===
-
-In today’s online environment, protecting your content is more important than ever. Whether you want to secure valuable resources, private documents, or exclusive member content, Smart Password Protect provides a comprehensive solution. 
 
 == Installation ==
 
@@ -79,3 +75,8 @@ Smart Password Protect is designed to work with most WordPress themes. If you en
 
 = 1.0.0 =
 * Initial release of the Smart Password Protect plugin.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+* First stable release of the Smart Password Protect plugin. Enable password protection and IP whitelisting for your site.
