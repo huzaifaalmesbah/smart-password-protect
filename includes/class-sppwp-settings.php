@@ -44,10 +44,10 @@ class SPPWP_Settings {
 	public function settings_init() {
 		register_setting( 'sppwp_settings', 'sppwp_options', array( $this, 'sanitize_settings' ) );
 
-		// General Settings Section
+		// General Settings Section.
 		$this->add_settings_section( 'general' );
 
-		// IP Settings Section
+		// IP Settings Section.
 		$this->add_settings_section( 'ips' );
 	}
 
@@ -57,7 +57,7 @@ class SPPWP_Settings {
 	 * @param string $tab The tab name ('general' or 'ips').
 	 */
 	protected function add_settings_section( $tab ) {
-		if ( $tab === 'general' ) {
+		if ( 'general' === $tab ) {
 			add_settings_section(
 				'sppwp_plugin_section_general',
 				esc_html__( 'General Settings', 'smart-password-protect' ),
@@ -66,7 +66,7 @@ class SPPWP_Settings {
 			);
 
 			$this->add_settings_fields( 'general' );
-		} elseif ( $tab === 'ips' ) {
+		} elseif ( 'ips' === $tab ) {
 			add_settings_section(
 				'sppwp_plugin_section_ips',
 				esc_html__( 'IP Settings', 'smart-password-protect' ),
@@ -84,7 +84,7 @@ class SPPWP_Settings {
 	 * @param string $tab The tab name ('general' or 'ips').
 	 */
 	protected function add_settings_fields( $tab ) {
-		if ( $tab === 'general' ) {
+		if ( 'general' === $tab ) {
 			add_settings_field(
 				'sppwp_password',
 				esc_html__( 'Password', 'smart-password-protect' ),
@@ -108,7 +108,7 @@ class SPPWP_Settings {
 				'sppwp_settings_general',
 				'sppwp_plugin_section_general'
 			);
-		} elseif ( $tab === 'ips' ) {
+		} elseif ( 'ips' === $tab ) {
 			add_settings_field(
 				'sppwp_allowed_ips',
 				esc_html__( 'Allowed IP Addresses', 'smart-password-protect' ),
@@ -120,33 +120,60 @@ class SPPWP_Settings {
 	}
 
 	/**
-	 * Render the options page.
+	 * Render the options page with modified form structure.
 	 */
 	public function options_page() {
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'sppwp_settings' ) ) {
+			return;
+		}
+
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
 		?>
 		<div class="wrap sppwp-wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=sppwp-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=sppwp-settings&tab=general" class="nav-tab <?php echo 'general' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'General Settings', 'smart-password-protect' ); ?>
 				</a>
-				<a href="?page=sppwp-settings&tab=ips" class="nav-tab <?php echo $active_tab == 'ips' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=sppwp-settings&tab=ips" class="nav-tab <?php echo 'ips' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'IP Settings', 'smart-password-protect' ); ?>
 				</a>
 			</h2>
 			<div class="sppwp-settings-container">
 				<form action="options.php" method="post" class="sppwp-form">
 					<?php
-					if ( $active_tab == 'general' ) {
-						settings_fields( 'sppwp_settings' );
-						do_settings_sections( 'sppwp_settings_general' );
-					} elseif ( $active_tab == 'ips' ) {
-						settings_fields( 'sppwp_settings' );
-						do_settings_sections( 'sppwp_settings_ips' );
-					}
-					submit_button( 'Save Settings', 'button button-primary' );
+					settings_fields( 'sppwp_settings' );
+
+					// Always output both sections, but hide inactive one with CSS.
 					?>
+					<div class="sppwp-tab-content" id="general-settings" style="<?php echo 'general' === $active_tab ? 'display:block;' : 'display:none;'; ?>">
+						<?php do_settings_sections( 'sppwp_settings_general' ); ?>
+					</div>
+					
+					<div class="sppwp-tab-content" id="ip-settings" style="<?php echo 'ips' === $active_tab ? 'display:block;' : 'display:none;'; ?>">
+						<?php do_settings_sections( 'sppwp_settings_ips' ); ?>
+					</div>
+					
+					<?php
+					// Hidden fields to preserve data from inactive tab.
+					$options = get_option( 'sppwp_options' );
+					if ( 'general' === $active_tab ) {
+						// Preserve IP settings.
+						$allowed_ips = isset( $options['sppwp_allowed_ips'] ) ? $options['sppwp_allowed_ips'] : '[]';
+						echo '<input type="hidden" name="sppwp_options[sppwp_allowed_ips]" value="' . esc_attr( $allowed_ips ) . '">';
+					} else {
+						// Preserve general settings.
+						$password    = isset( $options['sppwp_password'] ) ? $options['sppwp_password'] : '';
+						$enabled     = isset( $options['sppwp_enabled'] ) ? $options['sppwp_enabled'] : '0';
+						$remember_me = isset( $options['sppwp_remember_me'] ) ? $options['sppwp_remember_me'] : '7';
+
+						echo '<input type="hidden" name="sppwp_options[sppwp_password]" value="' . esc_attr( $password ) . '">';
+						echo '<input type="hidden" name="sppwp_options[sppwp_enabled]" value="' . esc_attr( $enabled ) . '">';
+						echo '<input type="hidden" name="sppwp_options[sppwp_remember_me]" value="' . esc_attr( $remember_me ) . '">';
+					}
+					?>
+					
+					<?php submit_button( 'Save Settings', 'button button-primary' ); ?>
 				</form>
 			</div>
 		</div>
@@ -313,7 +340,7 @@ class SPPWP_Settings {
 	 * @return array The sanitized options.
 	 */
 	public function sanitize_settings( $options ) {
-		// Validation for password when enabling protection
+		// Validation for password when enabling protection.
 		if ( isset( $options['sppwp_enabled'] ) && '1' === $options['sppwp_enabled'] ) {
 			if ( empty( $options['sppwp_password'] ) ) {
 				add_settings_error(
@@ -328,7 +355,7 @@ class SPPWP_Settings {
 			$options['sppwp_enabled'] = '0';
 		}
 
-		// Validation for allowed IP addresses
+		// Validation for allowed IP addresses.
 		if ( isset( $options['sppwp_allowed_ips'] ) ) {
 			$allowed_ips = json_decode( $options['sppwp_allowed_ips'], true );
 
@@ -343,6 +370,7 @@ class SPPWP_Settings {
 							'sppwp_options',
 							'ip_error',
 							sprintf(
+								/* translators: %s: IP address */
 								esc_html__( 'Invalid IP address: %s', 'smart-password-protect' ),
 								esc_html( $ip )
 							),
@@ -355,7 +383,7 @@ class SPPWP_Settings {
 			}
 		}
 
-		// Sanitize remember me days
+		// Sanitize remember me days.
 		if ( isset( $options['sppwp_remember_me'] ) ) {
 			$options['sppwp_remember_me'] = max( 1, intval( $options['sppwp_remember_me'] ) );
 		}
