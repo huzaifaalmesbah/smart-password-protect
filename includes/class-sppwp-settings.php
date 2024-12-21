@@ -44,10 +44,10 @@ class SPPWP_Settings {
 	public function settings_init() {
 		register_setting( 'sppwp_settings', 'sppwp_options', array( $this, 'sanitize_settings' ) );
 
-		// General Settings Section.
+		// General Settings Section
 		$this->add_settings_section( 'general' );
 
-		// IP Settings Section.
+		// IP Settings Section
 		$this->add_settings_section( 'ips' );
 	}
 
@@ -123,11 +123,7 @@ class SPPWP_Settings {
 	 * Render the options page with modified form structure.
 	 */
 	public function options_page() {
-		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'sppwp_settings' ) ) {
-			return;
-		}
-
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
 		?>
 		<div class="wrap sppwp-wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
@@ -155,14 +151,14 @@ class SPPWP_Settings {
 					</div>
 					
 					<?php
-					// Hidden fields to preserve data from inactive tab.
+					// Hidden fields to preserve data from inactive tab
 					$options = get_option( 'sppwp_options' );
 					if ( 'general' === $active_tab ) {
-						// Preserve IP settings.
+						// Preserve IP settings
 						$allowed_ips = isset( $options['sppwp_allowed_ips'] ) ? $options['sppwp_allowed_ips'] : '[]';
 						echo '<input type="hidden" name="sppwp_options[sppwp_allowed_ips]" value="' . esc_attr( $allowed_ips ) . '">';
 					} else {
-						// Preserve general settings.
+						// Preserve general settings
 						$password    = isset( $options['sppwp_password'] ) ? $options['sppwp_password'] : '';
 						$enabled     = isset( $options['sppwp_enabled'] ) ? $options['sppwp_enabled'] : '0';
 						$remember_me = isset( $options['sppwp_remember_me'] ) ? $options['sppwp_remember_me'] : '7';
@@ -340,7 +336,7 @@ class SPPWP_Settings {
 	 * @return array The sanitized options.
 	 */
 	public function sanitize_settings( $options ) {
-		// Validation for password when enabling protection.
+		// Validation for password when enabling protection
 		if ( isset( $options['sppwp_enabled'] ) && '1' === $options['sppwp_enabled'] ) {
 			if ( empty( $options['sppwp_password'] ) ) {
 				add_settings_error(
@@ -355,7 +351,7 @@ class SPPWP_Settings {
 			$options['sppwp_enabled'] = '0';
 		}
 
-		// Validation for allowed IP addresses.
+		// Validation for allowed IP addresses
 		if ( isset( $options['sppwp_allowed_ips'] ) ) {
 			$allowed_ips = json_decode( $options['sppwp_allowed_ips'], true );
 
@@ -370,7 +366,7 @@ class SPPWP_Settings {
 							'sppwp_options',
 							'ip_error',
 							sprintf(
-								/* translators: %s: IP address */
+								/* translators: %s: IP address that failed validation */
 								esc_html__( 'Invalid IP address: %s', 'smart-password-protect' ),
 								esc_html( $ip )
 							),
@@ -383,7 +379,7 @@ class SPPWP_Settings {
 			}
 		}
 
-		// Sanitize remember me days.
+		// Sanitize remember me days
 		if ( isset( $options['sppwp_remember_me'] ) ) {
 			$options['sppwp_remember_me'] = max( 1, intval( $options['sppwp_remember_me'] ) );
 		}

@@ -55,6 +55,11 @@
 		</properties>
 	</rule>
 
+	<!-- Exclude Inline comments must end in full-stops, exclamation marks, or question marks -->
+	<rule ref="Squiz.Commenting.InlineComment">
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+	</rule>
+
 	<arg value="s"/>
 	<arg name="extensions" value="php"/>
 	<file>.</file>
