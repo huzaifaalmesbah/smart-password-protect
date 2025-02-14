@@ -9,9 +9,8 @@
  * Domain Path: /languages
  * License: GPLv2 or later
  * Requires at least: 5.6
- * Tested up to: 6.6.2
  * Requires PHP: 7.0
- * Version: 1.0.0
+ * Version: 1.0.1
  *
  * @package SmartPasswordProtect
  */
@@ -22,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define constants for the plugin.
-define( 'SPPWP_VERSION', '1.0.0' );
+define( 'SPPWP_VERSION', '1.0.1' );
 define( 'SPPWP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SPPWP_URL', plugin_dir_url( __FILE__ ) );
 define( 'SPPWP_ASSETS_URL', SPPWP_URL . 'assets/' );
